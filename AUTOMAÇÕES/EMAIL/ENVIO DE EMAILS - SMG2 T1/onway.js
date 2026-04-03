@@ -70,6 +70,7 @@ function sendEmailsJustificativa() {
 		BRSP04: "fernanda.cacita@mercadolivre.com",
 		BRSP05: "joni.tieges@mercadolivre.com",
 		BRSP06: "",
+		BRSP09: "",
 		BRSP10: "",
 		BRSP11: "",
 		BRSP15: "",
@@ -140,11 +141,11 @@ function sendEmailsJustificativa() {
 				origensComPacoteGrande[origem] = true;
 				Logger.log(
 					"Pacote encontrado com valor > 100 USD para " +
-						origem +
-						": R$ " +
-						custoBRL +
-						" = $ " +
-						custoUSD.toFixed(2),
+					origem +
+					": R$ " +
+					custoBRL +
+					" = $ " +
+					custoUSD.toFixed(2),
 				);
 			}
 		}
