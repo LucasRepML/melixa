@@ -1,19 +1,15 @@
 // ==UserScript==
 // @name         Sauron - Auto Scroll to Shipment
 // @namespace    https://debugzone.com.br/
-// @version      1.2.1
+// @version      1.3.1
 // @description  Auto scroll até o envio correto (Seller ID) + Debug toggle com persistência.
 // @author       LucasWG
 // @match        https://shipping-bo.adminml.com/sauron/shipments/shipment/*
 // @grant        none
 // @run-at       document-idle
-// @updateURL    https://github.com/LucasRepML/melixa/raw/refs/heads/main/AUTOMA%C3%87%C3%95ES/Sauron%20-%20Auto%20Scroll%20to%20Shipment-1.2.1.user.js
-// @downloadURL  https://github.com/LucasRepML/melixa/raw/refs/heads/main/AUTOMA%C3%87%C3%95ES/Sauron%20-%20Auto%20Scroll%20to%20Shipment-1.2.1.user.js
+// @updateURL    https://github.com/LucasRepML/melixa/raw/refs/heads/main/AUTOMA%C3%87%C3%95ES/Sauron%20-%20Auto%20Scroll%20to%20Shipment.user.js
+// @downloadURL  https://github.com/LucasRepML/melixa/raw/refs/heads/main/AUTOMA%C3%87%C3%95ES/Sauron%20-%20Auto%20Scroll%20to%20Shipment.user.js
 // ==/UserScript==
-
-
-
-
 
 (function () {
 	'use strict';
