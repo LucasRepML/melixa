@@ -89,14 +89,23 @@ body {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	font-size: 17px;
+	font-size: 22px;
 	font-weight: 700;
-	color: var(--primary);
 	white-space: nowrap;
 	flex-shrink: 0;
 }
-#logo span {
-	font-size: 22px;
+#logo a {
+	color: var(--primary);
+	text-decoration: none;
+	display: flex;
+	align-items: center;
+	transition: opacity var(--transition);
+}
+#logo a:hover {
+	opacity: 0.85;
+}
+#logo img {
+	display: block;
 }
 #search-wrap {
 	flex: 1;

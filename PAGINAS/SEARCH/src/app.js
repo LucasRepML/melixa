@@ -324,6 +324,8 @@ function buildItem(raw) {
 		_extra: {},
 	};
 
+	item._isEnrichment = !item.descricao;
+
 	const knownInternals = new Set([
 		"id",
 		"descricao",
@@ -627,7 +629,7 @@ let allItems = [];
 let itemsMap = new Map();
 let dataSource = "empty";
 let savedAt = null;
-let currentView = "grid";
+let currentView = "list";
 
 function mergeIntoExisting(existing, incoming) {
 	const fields = [
@@ -680,12 +682,31 @@ function ingestItems(newItems) {
 		merged = 0;
 	for (const item of newItems) {
 		if (!item.id) continue;
+		if (!item._extra) item._extra = {};
+		
 		if (itemsMap.has(item.id)) {
-			mergeIntoExisting(itemsMap.get(item.id), item);
-			merged++;
+			const existingGroup = itemsMap.get(item.id);
+			for (const ex of existingGroup) {
+				mergeIntoExisting(ex, item);
+				mergeIntoExisting(item, ex);
+			}
+			
+			if (item._isEnrichment) {
+				merged++;
+			} else {
+				const ghostIdx = existingGroup.findIndex(x => x._isEnrichment);
+				if (ghostIdx !== -1) {
+					existingGroup[ghostIdx]._isEnrichment = false;
+					merged++;
+				} else {
+					existingGroup.push(item);
+					allItems.push(item);
+					added++;
+					merged++;
+				}
+			}
 		} else {
-			if (!item._extra) item._extra = {};
-			itemsMap.set(item.id, item);
+			itemsMap.set(item.id, [item]);
 			allItems.push(item);
 			added++;
 		}
@@ -706,7 +727,7 @@ async function saveItems() {
 	} catch (e) {
 		dbg(`Erro ao salvar cache: ${e.message}`, "err");
 		toast(
-			"⚠️ Falha ao salvar dados no IndexedDB. Dados em memória.",
+			"Falha ao salvar dados no IndexedDB. Dados em memória.",
 			"warn",
 		);
 		dataSource = "memory";
@@ -730,7 +751,11 @@ async function loadItems() {
 				: parsePtDate(it.atualizacaoRaw);
 			if (!it._extra) it._extra = {};
 			it._searchBlob = buildBlob(it);
-			itemsMap.set(it.id, it);
+			
+			if (!itemsMap.has(it.id)) {
+				itemsMap.set(it.id, []);
+			}
+			itemsMap.get(it.id).push(it);
 		}
 		savedAt = payload.savedAt ? new Date(payload.savedAt) : null;
 		dataSource = "cache";
@@ -1441,13 +1466,13 @@ async function handleFiles(files) {
 		$("#debugPanel").classList.add("show");
 		renderDebug();
 		toast(
-			`⚠️ Nenhum item carregado. Veja o painel de debug abaixo.`,
+			`Nenhum item carregado. Veja o painel de debug abaixo.`,
 			"warn",
 			6000,
 		);
 	} else {
 		toast(
-			`✅ ${arr.length} arquivo(s): +${totalAdded} novos, ${totalMerged} atualizados. Total: ${allItems.length}`,
+			`${arr.length} arquivo(s): +${totalAdded} novos, ${totalMerged} atualizados.\nTotal: ${allItems.length}`,
 			"success",
 			5000,
 		);
@@ -1587,7 +1612,7 @@ $("#clearBtn").addEventListener("click", async () => {
 	await clearItems();
 	rebuildChecklists();
 	render();
-	toast("Dados limpos. ✓", "success");
+	toast("Dados limpos.", "success");
 });
 
 $("#resetFiltersBtn").addEventListener("click", () => {
@@ -1665,7 +1690,7 @@ $("#themeBtn").addEventListener("click", () => {
 	rebuildChecklists();
 	render();
 	if (hasCache) {
-		toast(`✅ Cache restaurado: ${allItems.length} itens.`, "info", 3000);
+		toast(`Cache restaurado: ${allItems.length} itens.`, "info", 3000);
 	} else {
 		dbg("Nenhum cache anterior encontrado", "info");
 	}
